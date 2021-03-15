@@ -1,4 +1,5 @@
 import os
+import re
 
 import requests
 from flask import Flask, send_file, Response
@@ -16,10 +17,20 @@ def get_fact():
 
     return facts[0].getText()
 
+def display_url(fact):
+    url = "https://hidden-journey-62459.herokuapp.com/piglatinize/"
+    payload = {'input_text': fact}
+
+    redirection = requests.post(url, data=payload, allow_redirects=False)
+
+    return redirection.headers['Location']
 
 @app.route('/')
 def home():
-    return "FILL ME!"
+    fact = get_fact().strip()
+    body = display_url(fact)
+
+    return Response(response=body, mimetype="text/html")
 
 
 if __name__ == "__main__":
